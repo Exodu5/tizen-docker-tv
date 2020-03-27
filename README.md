@@ -1,3 +1,3 @@
-# tizen-img
+# tizen-docker
 
-A tizen image
+A Tizen image
