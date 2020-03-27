@@ -1,4 +1,8 @@
-FROM nugulinux/devenv:bionic
+FROM ubuntu:16.04
+
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
 
 LABEL maintainer="fremontclement21@gmail.com" \
       version="0.1" \
@@ -10,18 +14,30 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LANG=$LC_ALL
 
 RUN apt-get update && apt-get install -y \
+        acl \
         ca-certificates-java \
         openjdk-8-jdk \
         pciutils \
         rpm2cpio \
         sudo \
         zip \
-        libwebkitgtk-1.0-0 \
-        acl \
+        gettext \
+        libcanberra-gtk-module \
+        libcurl3-gnutls \
         libsdl1.2debian \
+        libwebkitgtk-1.0-0 \
+        libv4l-0 \
+        libvirt-bin \
+        libxcb-render-util0 \
+        libxcb-randr0 \
+        libxcb-shape0 \
+        libxcb-icccm4 \
+        libxcb-image0 \
+        libxtst6 \
         cpio \
         bridge-utils \
         openvpn \
+        wget \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -49,17 +65,17 @@ ENV PATH=/home/$USER/tizen-studio/tools/ide/bin:$PATH
 # Add sdb cli path
 ENV PATH=/home/$USER/tizen-studio/tools/sdb:$PATH
 
-RUN ./tizen-studio/package-manager/package-manager-cli.bin \
-    install --accept-license MOBILE-4.0-NativeAppDevelopment-CLI
+# RUN ./tizen-studio/package-manager/package-manager-cli.bin \
+#     install --accept-license MOBILE-4.0-NativeAppDevelopment-CLI
 
-ENV EMULATOR_TOOLCHAIN=/home/work/tizen-studio/tools/i586-linux-gnueabi-gcc-6.2 \
-    EMULATOR_SYSROOT=/home/work/tizen-studio/platforms/tizen-4.0/mobile/rootstraps/mobile-4.0-emulator.core \
-    EMULATOR_TRIPLE=i586-linux-gnueabi \
-    EMULATOR_ARCH=i386 \
-    DEVICE_TOOLCHAIN=/home/work/tizen-studio/tools/arm-linux-gnueabi-gcc-6.2 \
-    DEVICE_SYSROOT=/home/work/tizen-studio/platforms/tizen-4.0/mobile/rootstraps/mobile-4.0-device.core \
-    DEVICE_TRIPLE=arm-linux-gnueabi \
-    DEVICE_ARCH=armel
+# ENV EMULATOR_TOOLCHAIN=/home/work/tizen-studio/tools/i586-linux-gnueabi-gcc-6.2 \
+#     EMULATOR_SYSROOT=/home/work/tizen-studio/platforms/tizen-4.0/mobile/rootstraps/mobile-4.0-emulator.core \
+#     EMULATOR_TRIPLE=i586-linux-gnueabi \
+#     EMULATOR_ARCH=i386 \
+#     DEVICE_TOOLCHAIN=/home/work/tizen-studio/tools/arm-linux-gnueabi-gcc-6.2 \
+#     DEVICE_SYSROOT=/home/work/tizen-studio/platforms/tizen-4.0/mobile/rootstraps/mobile-4.0-device.core \
+#     DEVICE_TRIPLE=arm-linux-gnueabi \
+#     DEVICE_ARCH=armel
 
 RUN sudo chmod 755 /root
 
