@@ -4,7 +4,7 @@ A Tizen image
 
 ## Build
 
-docker build -f tizen-docker .
+docker build -f Dockerfile .
 
 ## Run
 

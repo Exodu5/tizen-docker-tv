@@ -80,9 +80,6 @@ ENV PATH=/home/$USER/tizen-studio/tools/sdb:$PATH
 RUN sudo chmod 755 /root
 
 RUN ./tizen-studio/package-manager/package-manager-cli.bin \
-    install --accept-license TOOLS
-
-RUN ./tizen-studio/package-manager/package-manager-cli.bin \
     install --accept-license Emulator
 
 RUN ./tizen-studio/package-manager/package-manager-cli.bin \
