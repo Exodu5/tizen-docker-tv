@@ -65,18 +65,6 @@ ENV PATH=/home/$USER/tizen-studio/tools/ide/bin:$PATH
 # Add sdb cli path
 ENV PATH=/home/$USER/tizen-studio/tools/sdb:$PATH
 
-# RUN ./tizen-studio/package-manager/package-manager-cli.bin \
-#     install --accept-license MOBILE-4.0-NativeAppDevelopment-CLI
-
-# ENV EMULATOR_TOOLCHAIN=/home/work/tizen-studio/tools/i586-linux-gnueabi-gcc-6.2 \
-#     EMULATOR_SYSROOT=/home/work/tizen-studio/platforms/tizen-4.0/mobile/rootstraps/mobile-4.0-emulator.core \
-#     EMULATOR_TRIPLE=i586-linux-gnueabi \
-#     EMULATOR_ARCH=i386 \
-#     DEVICE_TOOLCHAIN=/home/work/tizen-studio/tools/arm-linux-gnueabi-gcc-6.2 \
-#     DEVICE_SYSROOT=/home/work/tizen-studio/platforms/tizen-4.0/mobile/rootstraps/mobile-4.0-device.core \
-#     DEVICE_TRIPLE=arm-linux-gnueabi \
-#     DEVICE_ARCH=armel
-
 RUN sudo chmod 755 /root
 
 RUN ./tizen-studio/package-manager/package-manager-cli.bin \
