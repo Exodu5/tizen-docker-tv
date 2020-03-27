@@ -46,6 +46,8 @@ RUN wget http://download.tizen.org/sdk/Installer/tizen-studio_3.6/web-cli_Tizen_
 
 # Add tizen cli path
 ENV PATH=/home/$USER/tizen-studio/tools/ide/bin:$PATH
+# Add sdb cli path
+ENV PATH=/home/$USER/tizen-studio/tools/sdb:$PATH
 
 RUN ./tizen-studio/package-manager/package-manager-cli.bin \
     install --accept-license MOBILE-4.0-NativeAppDevelopment-CLI
@@ -63,6 +65,9 @@ RUN sudo chmod 755 /root
 
 RUN ./tizen-studio/package-manager/package-manager-cli.bin \
     install --accept-license TOOLS
+
+RUN ./tizen-studio/package-manager/package-manager-cli.bin \
+    install --accept-license Emulator
 
 RUN ./tizen-studio/package-manager/package-manager-cli.bin \
     install --accept-license Baseline-SDK
