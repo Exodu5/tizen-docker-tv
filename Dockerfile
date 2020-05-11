@@ -1,92 +1,31 @@
-FROM ubuntu:16.04
+FROM openjdk:8-jre-slim
 
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-ENV DEBIAN_FRONTEND noninteractive
+ENV TIZEN_CLI_INSTALLER_URL http://download.tizen.org/sdk/Installer/tizen-studio_2.1/web-cli_Tizen_Studio_2.1_ubuntu-64.bin
 
-LABEL maintainer="fremontclement21@gmail.com" \
-      version="0.1" \
-      description="NUGUSDK for Tizen development environment"
+ENV TIZEN_USER user
+ENV TIZEN_USER_HOME /home/$TIZEN_USER
+ENV TIZEN_STUDIO $TIZEN_USER_HOME/tizen-studio
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    USER=work \
-    LC_ALL=en_US.UTF-8 \
-    LANG=$LC_ALL
-
-RUN apt-get update && apt-get install -y \
-        acl \
-        ca-certificates-java \
-        openjdk-8-jdk \
-        pciutils \
-        rpm2cpio \
-        sudo \
-        zip \
-        gettext \
-        libcanberra-gtk-module \
-        libcurl3-gnutls \
-        libsdl1.2debian \
-        libwebkitgtk-1.0-0 \
-        libv4l-0 \
-        libvirt-bin \
-        libxcb-render-util0 \
-        libxcb-randr0 \
-        libxcb-shape0 \
-        libxcb-icccm4 \
-        libxcb-image0 \
-        libxtst6 \
-        cpio \
-        bridge-utils \
-        openvpn \
-        wget \
-    && apt-get clean \
+RUN echo 'deb http://deb.debian.org/debian jessie main' >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get -y install curl libssl1.0.0 \
     && rm -rf /var/lib/apt/lists/*
 
-# User
-RUN useradd -ms /bin/bash $USER \
-	&& echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER \
-	&& chmod 0440 /etc/sudoers.d/$USER \
-	&& echo 'Defaults env_keep="http_proxy https_proxy ftp_proxy no_proxy"' >> /etc/sudoers \
-	&& adduser $USER dialout
+RUN useradd -md $TIZEN_USER_HOME $TIZEN_USER
+USER $TIZEN_USER
+WORKDIR $TIZEN_USER_HOME
 
-USER $USER
-ENV HOME=/home/$USER \
-    JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
-ENV PATH=$JAVA_HOME/bin:$PATH
-WORKDIR /home/$USER
+RUN INSTALLER=/tmp/$(basename "$TIZEN_CLI_INSTALLER_URL") \
+    && curl "$TIZEN_CLI_INSTALLER_URL" > "$INSTALLER" \
+    && chmod 755 "$INSTALLER" \
+    && "$INSTALLER" --no-java-check --accept-license $TIZEN_STUDIO \
+    && rm "$INSTALLER" \
+    && cd $TIZEN_STUDIO/tools/certificate-generator/patches/partner \
+    && ./patch.sh $TIZEN_STUDIO \
+    && rm -rf \
+       $TIZEN_USER_HOME/.package-manager \
+       $TIZEN_USER_HOME/tizen-studio/license \
+       $TIZEN_USER_HOME/tizen-studio/package-manager
 
-# Tizen Studio CLI tool
-RUN wget http://download.tizen.org/sdk/Installer/tizen-studio_3.6/web-cli_Tizen_Studio_3.6_ubuntu-64.bin \
-    && chmod 755 web-cli_Tizen_Studio_3.6_ubuntu-64.bin \
-    && yes | ./web-cli_Tizen_Studio_3.6_ubuntu-64.bin --accept-license \
-    && rm web-cli_Tizen_Studio_3.6_ubuntu-64.bin
-
-# Add tizen cli path
-ENV PATH=/home/$USER/tizen-studio/tools/ide/bin:$PATH
-# Add sdb cli path
-ENV PATH=/home/$USER/tizen-studio/tools/sdb:$PATH
-
-RUN sudo chmod 755 /root
-
-RUN ./tizen-studio/package-manager/package-manager-cli.bin \
-    install --accept-license Emulator
-
-RUN ./tizen-studio/package-manager/package-manager-cli.bin \
-    install --accept-license Baseline-SDK
-
-RUN ./tizen-studio/package-manager/package-manager-cli.bin \
-    install --accept-license TV-SAMSUNG-Extension-Resources
-
-RUN ./tizen-studio/package-manager/package-manager-cli.bin \
-    install --accept-license TV-SAMSUNG-Extension-Tool
-
-RUN ./tizen-studio/package-manager/package-manager-cli.bin \
-    install --accept-license TV-SAMSUNG-Public
-
-RUN ./tizen-studio/package-manager/package-manager-cli.bin \
-    install --accept-license TV-SAMSUNG-Public-Emulator
-
-RUN ./tizen-studio/package-manager/package-manager-cli.bin \
-    install --accept-license TV-SAMSUNG-Public-WebAppDevelopment
-
-
-ENTRYPOINT [ "/bin/bash" ]
+COPY docker-entrypoint.sh /usr/local/bin/
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
