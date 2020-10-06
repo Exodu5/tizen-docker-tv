@@ -1,4 +1,4 @@
-# tizen-docker
+# tizen-docker-tv
 
 A Tizen image
 
